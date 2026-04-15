@@ -6,7 +6,7 @@ Detailed Preprocessing Steps
 - Normalization (img / 255.0): Scales pixel values from 
 
 
-. This helps the neural network converge faster during training.
+This helps the neural network converge faster during training.
 
 - Label Encoding (LabelEncoder): Converts string labels into numeric vectors for model compatibility.
 - Class Balancing (resample): Detects class imbalance and uses resample to oversample minority classes. This ensures the model does not become biased toward the majority class, improving accuracy on underrepresented classes.
@@ -14,3 +14,7 @@ Detailed Preprocessing Steps
 - Data Augmentation (ImageDataGenerator): Applies transformations like rotation, shifting, zooming, and flipping . This artificially increases the dataset size, reduces overfitting, and improves model generalization.
 
 
+Thats all for this round 2, preprocessing !!
+model training is mostly done but still we need to refine that . 
+that will be of round 3 .
+Thankyou from team Bellicose .
