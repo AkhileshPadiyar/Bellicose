@@ -1,20 +1,59 @@
-Detailed Preprocessing Steps
-- Loading and Converting (cv2.imread,cvtColor(BGR2RGB))In this images are loaded and converted from BGR to RGB, as it is standard for most CNNs model, ensuring colors are represented correctly.
-- Resizing (cv2.resize(img,(224,224))): Standardizes all images to 224x224 pixels. CNNs require uniform input sizes, and 224x224 is a standard input size for many pre-trained models.
-- Noise Reduction (cv2.GaussianBlur): Smooths the image to reduce, unwanted noise, which helps the model focus on structure rather than pixel-level artifacts.
-- Contrast Enhancement (CLAHE): The image is converted to LAB color space, and Contrast Limited Adaptive Histogram Equalization (CLAHE) is applied. This improves local contrast, highlighting important details without over-enhancing noise.
-- Normalization (img / 255.0): Scales pixel values from 
+#  Disaster Management
+## Pipelining
+1. Data Preprocessing
+   - Removed Baseic
+     ```
+      def preprocess_img(img):
+      img = cv2.GaussianBlur(img, (5,5), 0)
+  
+      lab = cv2.cvtColor(img.astype(np.uint8), cv2.COLOR_RGB2LAB)
+      l,a,b = cv2.split(lab)
+  
+      clahe = cv2.createCLAHE(clipLimit=2.0,tileGridSize=(8,8))
+      l = clahe.apply(l)
+  
+      img = cv2.merge((l,a,b))
+      img = cv2.cvtColor(img, cv2.COLOR_LAB2RGB)
+  
+      img = img / 255.0
+      return img
+     ```
+2. Model Selection
+   - ResNet. But Why ?
+     - Prevent vanishing gradient problems in very deep models.
+     - Skip connections let information flow directly across layers.
+     - ResNet enables building networks with hundreds or even thousands of layers.
+     - It is widely used in computer vision tasks like image classification and object detection
 
+3. Innovation
+   - Instead of oversampling we used class_weights, to solve the problems of unbaised datasets
+   - This reduces the time required to train the model, because of prevention of oversampling
+     ```
+      from sklearn.utils.class_weight import compute_class_weight
+      class_weights = compute_class_weight(
+      class_weight='balanced',
+      classes=np.unique(train_data.classes),
+      y=train_data.classes
+     ```
+     and Implemented in the compilation phase
+     ```
+       history = model.fit(
+      train_data,
+      validation_data=val_data,
+      epochs=10,
+      class_weight=class_weights
+)
+     ```
+)
 
-This helps the neural network converge faster during training.
+class_weights = dict(enumerate(class_weights))
+     ```
 
-- Label Encoding (LabelEncoder): Converts string labels into numeric vectors for model compatibility.
-- Class Balancing (resample): Detects class imbalance and uses resample to oversample minority classes. This ensures the model does not become biased toward the majority class, improving accuracy on underrepresented classes.
-- One-Hot Encoding (to_categorical): Converts labels into categorical format, which is required for multi-class classification output layers usually softmax activation function.
-- Data Augmentation (ImageDataGenerator): Applies transformations like rotation, shifting, zooming, and flipping . This artificially increases the dataset size, reduces overfitting, and improves model generalization.
+4. Model Evaluation
+   - Acheived an **trainng accuracy** and **validation accuracy** of **0.9402** and  **0.8758**
+   - Losses were **loss: 0.1531** and  **val_loss: 0.4040**
 
-
-Thats all for this round 2, preprocessing !!
-model training is mostly done but still we need to refine that . 
-that will be of round 3 .
-Thankyou from team Bellicose .
+##  Refrences
+- [TensorFlow ResNet](https://www.tensorflow.org/api_docs/python/tf/keras/applications/resnet)
+- [Github Pages for Documentation Writing Syntax](https://docs.github.com/en/get-started/writing-on-github/getting-started-with-writing-and-formatting-on-github/basic-writing-and-formatting-syntax)
+- [Keras](https://keras.io/api/applications/resnet/)
