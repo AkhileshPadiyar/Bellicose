@@ -1,7 +1,7 @@
 #  Disaster Management
 ## Pipelining
 1. Data Preprocessing
-   - Removed Baseic
+   - Removed noise for the dataset
      ```
       def preprocess_img(img):
       img = cv2.GaussianBlur(img, (5,5), 0)
@@ -53,7 +53,28 @@ class_weights = dict(enumerate(class_weights))
    - Acheived an **trainng accuracy** and **validation accuracy** of **0.9402** and  **0.8758**
    - Losses were **loss: 0.1531** and  **val_loss: 0.4040**
 
+5. Website
+   - Created a small interface using gradio which accepts a image and tells what type of disaster is it
+     ```
+       import gradio as gr
+      
+       def predict(img):
+       img = load_img(img, target_size=(128,128))
+       img = img_to_array(img)/255.0
+       img = np.expand_dims(img, axis=0)
+       pred = model.predict(img)
+       pred_class = int(np.argmax(pred))
+       return className(pred_class)
+   
+      demo = gr.Interface(
+          fn=predict, 
+          inputs=gr.Image(type="filepath"), 
+          outputs=gr.Label()
+      )
+      demo.launch()
+     ```
+
 ##  Refrences
 - [TensorFlow ResNet](https://www.tensorflow.org/api_docs/python/tf/keras/applications/resnet)
 - [Github Pages for Documentation Writing Syntax](https://docs.github.com/en/get-started/writing-on-github/getting-started-with-writing-and-formatting-on-github/basic-writing-and-formatting-syntax)
-- [Keras](https://keras.io/api/applications/resnet/)
+- [Keras ResNet](https://keras.io/api/applications/resnet/)
